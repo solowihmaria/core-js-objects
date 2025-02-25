@@ -132,8 +132,23 @@ function makeImmutable(obj) {
  *    makeWord({ a: [0, 1], b: [2, 3], c: [4, 5] }) => 'aabbcc'
  *    makeWord({ H:[0], e: [1], l: [2, 3, 8], o: [4, 6], W:[5], r:[7], d:[9]}) => 'HelloWorld'
  */
-function makeWord(/* lettersObject */) {
-  throw new Error('Not implemented');
+function makeWord(lettersObject) {
+  if (Object.keys(lettersObject).length === 0) {
+    return '';
+  }
+  // Определяем максимальную длину слова
+  const maxLength = Math.max(...Object.values(lettersObject).flat()) + 1;
+  // Пустой массив нужной длины
+  const result = new Array(maxLength).fill('');
+
+  // Заполняем массив буквами по позициям
+  Object.entries(lettersObject).forEach(([letter, positions]) => {
+    positions.forEach((position) => {
+      result[position] = letter;
+    });
+  });
+
+  return result.join('');
 }
 
 /**
