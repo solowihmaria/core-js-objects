@@ -17,8 +17,9 @@
  *    shallowCopy({a: 2, b: { a: [1, 2, 3]}}) => {a: 2, b: { a: [1, 2, 3]}}
  *    shallowCopy({}) => {}
  */
-function shallowCopy(/* obj */) {
-  throw new Error('Not implemented');
+function shallowCopy(obj) {
+  const copy = {};
+  return Object.assign(copy, obj);
 }
 
 /**
@@ -165,8 +166,29 @@ function makeWord(lettersObject) {
  *    sellTickets([25, 25, 50]) => true
  *    sellTickets([25, 100]) => false (The seller does not have enough money to give change.)
  */
-function sellTickets(/* queue */) {
-  throw new Error('Not implemented');
+function sellTickets(queue) {
+  let count25 = 0; // Количество купюр 25
+  let count50 = 0; // Количество купюр 50
+
+  return queue.every((bill) => {
+    if (bill === 25) {
+      count25 += 1;
+    } else if (bill === 50) {
+      if (count25 === 0) return false;
+      count25 -= 1;
+      count25 += 1;
+    } else if (bill === 100) {
+      if (count50 > 0 && count25 > 0) {
+        count50 -= 1;
+        count25 -= 1;
+      } else if (count25 >= 3) {
+        count25 -= 3;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  });
 }
 
 /**
@@ -182,8 +204,13 @@ function sellTickets(/* queue */) {
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  this.width = width;
+  this.height = height;
+
+  this.getArea = function () {
+    return this.width * this.height;
+  };
 }
 
 /**
@@ -196,8 +223,8 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { height: 10, width: 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
 
 /**
@@ -211,8 +238,9 @@ function getJSON(/* obj */) {
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
+function fromJSON(proto, json) {
+  const obj = JSON.parse(json); // преобразуем JSON в объект
+  return Object.assign(Object.create(proto), obj); // поздаём объект с нужным прототипом и копируем свойства
 }
 
 /**
@@ -241,8 +269,16 @@ function fromJSON(/* proto, json */) {
  *      { country: 'Russia',  city: 'Saint Petersburg' }
  *    ]
  */
-function sortCitiesArray(/* arr */) {
-  throw new Error('Not implemented');
+function sortCitiesArray(arr) {
+  return arr.sort((a, b) => {
+    if (a.country > b.country) return 1;
+    if (a.country < b.country) return -1;
+
+    if (a.city > b.city) return 1;
+    if (a.city < b.city) return -1;
+
+    return 0;
+  });
 }
 
 /**
@@ -275,8 +311,26 @@ function sortCitiesArray(/* arr */) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const map = new Map();
+
+  // перебираем каждый элемент в переданном массиве
+  array.forEach((item) => {
+    // keySelector  функция, которая из элемента массива извлекает значение, которое будет ключом в Map
+    const key = keySelector(item);
+    // valueSelector  функция, которая из элемента массива извлекает значение, которое будет храниться в массиве значений по ключу
+    const value = valueSelector(item);
+
+    // проверяем, существует ли уже ключ в Map
+    if (!map.has(key)) {
+      // если нет, начинаем новую группу для этого ключа.
+      map.set(key, []);
+    }
+    // получаем массив значений, связанный с текущим ключом, и добавляем в него полученное значение
+    map.get(key).push(value);
+  });
+
+  return map;
 }
 
 /**
