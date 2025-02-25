@@ -268,8 +268,16 @@ function fromJSON(proto, json) {
  *      { country: 'Russia',  city: 'Saint Petersburg' }
  *    ]
  */
-function sortCitiesArray(/* arr */) {
-  throw new Error('Not implemented');
+function sortCitiesArray(arr) {
+  return arr.sort((a, b) => {
+    if (a.country > b.country) return 1;
+    if (a.country < b.country) return -1;
+
+    if (a.city > b.city) return 1;
+    if (a.city < b.city) return -1;
+
+    return 0;
+  });
 }
 
 /**
@@ -302,8 +310,26 @@ function sortCitiesArray(/* arr */) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const map = new Map();
+
+  // перебираем каждый элемент в переданном массиве
+  array.forEach((item) => {
+    // keySelector  функция, которая из элемента массива извлекает значение, которое будет ключом в Map
+    const key = keySelector(item);
+    // valueSelector  функция, которая из элемента массива извлекает значение, которое будет храниться в массиве значений по ключу
+    const value = valueSelector(item);
+
+    // проверяем, существует ли уже ключ в Map
+    if (!map.has(key)) {
+      // если нет, начинаем новую группу для этого ключа.
+      map.set(key, []);
+    }
+    // получаем массив значений, связанный с текущим ключом, и добавляем в него полученное значение
+    map.get(key).push(value);
+  });
+
+  return map;
 }
 
 /**
